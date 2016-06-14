@@ -32,7 +32,9 @@ def GetInfra( CurrentDir, InfraName, Action, HostName ):
                 Json = {}
                 for Host in InfraYaml:
                     if (Host["name"] == HostName):
-                        HostVars = {"ansible_user": Host["ansible_user"], "ansible_host": Host["ip"], "ansible_ssh_private_key_file": Host["ansible_key_private"], "mysql_root_password": Host["mysql_root_password"]}
+                        HostVars = {"ansible_user": Host["ansible_user"], "ansible_host": Host["ip"], "ansible_ssh_private_key_file": Host["ansible_key_private"]}
+                        if ("mysql_root_password" in Host):
+                            HostVars["mysql_root_password"] = Host["mysql_root_password"]
                         Json = HostVars
                         break
             
