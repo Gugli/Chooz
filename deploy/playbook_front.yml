@@ -1,5 +1,5 @@
 ---
  - hosts: "front"
    roles:
-    - "server_apache"
+    - "chooz_front"
 ...

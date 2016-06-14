@@ -1,0 +1,8 @@
+---
+ - name: "Install php"
+   delegate_to: localhost
+   apt: name={{item}} state=present
+   become: yes
+   with_items:
+    - "php5-cli"
+...

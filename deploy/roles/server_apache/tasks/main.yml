@@ -1,0 +1,8 @@
+---
+ - name: "Install apache server"
+   apt: name=apache2 state=present
+   become: yes
+   with_items:
+    - "apache2"
+    - "libapache2-mod-php5"
+...

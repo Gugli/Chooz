@@ -1,0 +1,5 @@
+---
+dependencies:
+  - { role: "virtual_host" }
+  - { role: "local_install_symfony" }
+...

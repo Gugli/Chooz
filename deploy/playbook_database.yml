@@ -1,5 +1,5 @@
 ---
  - hosts: "database"
    roles:
-    - "server_mysql"
+    - "chooz_database"
 ...

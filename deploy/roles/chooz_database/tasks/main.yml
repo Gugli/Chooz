@@ -1,0 +1,4 @@
+---
+ - name: "add Mysql user"
+   mysql_user: name="chooz" state=present login_user="root" login_host="localhost" login_password="{{mysql_root_password}}"
+...

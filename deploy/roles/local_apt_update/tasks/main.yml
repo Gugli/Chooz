@@ -1,0 +1,6 @@
+---
+ - name: "Apt update repositories"
+   apt: update_cache=yes
+   become: yes
+   delegate_to: localhost
+...

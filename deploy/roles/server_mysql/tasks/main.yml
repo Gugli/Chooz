@@ -12,4 +12,10 @@
  - name: "Install mysql server"
    apt: name=mysql-server state=present
    become: yes
+   
+ - name: "Install mysql tools"
+   apt: name={{item}} state=present
+   become: yes
+   with_items:
+    - "python-mysqldb"
 ...
