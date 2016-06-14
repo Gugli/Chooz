@@ -1,0 +1,4 @@
+---
+ - include: ./playbook_database.yml
+ - include: ./playbook_front.yml
+...

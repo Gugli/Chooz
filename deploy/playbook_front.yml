@@ -1,0 +1,5 @@
+---
+ - hosts: "front"
+   roles:
+    - "server_apache"
+...

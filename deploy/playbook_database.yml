@@ -1,0 +1,5 @@
+---
+ - hosts: "database"
+   roles:
+    - "server_mysql"
+...

@@ -1,0 +1,16 @@
+---
+  - name: "database001"
+    ip: "192.168.51.100"
+    ansible_user: "ansible"
+    ansible_key_private: "./keys_local/LocalAnsibleKey.key"
+    mysql_root_password: "MYSQLROOTPASSWORD"
+    groups:
+      - "database"
+      
+  - name: "front001"
+    ip: "192.168.52.100"
+    ansible_user: "ansible"
+    ansible_key_private: "./keys_local/LocalAnsibleKey.key"
+    groups:
+      - "front"
+...

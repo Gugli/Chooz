@@ -1,0 +1,65 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'yaml'
+
+# Read YAML file with box details
+serversYaml = YAML.load_file('./deploy/infra_local.yml')
+
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+    config.vm.box = "ubuntu/trusty64"
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+    config.ssh.insert_key = false
+    config.vm.provider "virtualbox" do |virtualbox|
+        virtualbox.memory = 2048
+        virtualbox.cpus = 4
+    end
+
+    # Setup whole infra
+    serversYaml.each do |server|
+        servername = server["name"]
+        config.vm.define servername do |serverconfig|
+            serverconfig.vm.hostname = servername
+            serverconfig.vm.network "private_network", ip: server["ip"]
+            serverconfig.vm.provider "virtualbox" do |virtualbox|
+                virtualbox.name = servername
+            end
+            serverconfig.vm.provision "file", source: "./keys_local/LocalAnsibleKey.key", destination: "/tmp/private_key"
+            serverconfig.vm.provision :shell, :inline => "useradd ansible"
+            serverconfig.vm.provision :shell, :inline => "mkdir /home/ansible"
+            serverconfig.vm.provision :shell, :inline => "mkdir /home/ansible/.ssh"
+            serverconfig.vm.provision :shell, :inline => "ssh-keygen -y -f /tmp/private_key > /home/ansible/.ssh/authorized_keys"
+            serverconfig.vm.provision :shell, :inline => "chmod u=rx,go= /home/ansible/.ssh"
+            serverconfig.vm.provision :shell, :inline => "chmod u=r,go= /home/ansible/.ssh/authorized_keys"
+            serverconfig.vm.provision :shell, :inline => "chown -R ansible:ansible /home/ansible"
+            serverconfig.vm.provision :shell, :inline => "rm /tmp/private_key"
+            
+            serverconfig.vm.provision :shell, :inline => "echo 'ansible ALL=(ALL) NOPASSWD:ALL'> /etc/sudoers.d/ansible"
+            serverconfig.vm.provision :shell, :inline => "chmod ug=r,o= /etc/sudoers.d/ansible"
+            serverconfig.vm.provision :shell, :inline => "chown -R root:root /etc/sudoers.d/ansible"
+        end
+    end
+    
+    config.vm.define "deploy" do |deploy|
+        deploy.vm.hostname = "deploy"
+        deploy.vm.network "private_network", ip: "192.168.50.100"
+        deploy.vm.provider "virtualbox" do |virtualbox|
+                virtualbox.name = "deploy"
+        end
+        
+        
+        # Shared folders
+        deploy.vm.synced_folder "./deploy", "/home/vagrant/deploy"
+        deploy.vm.synced_folder "./src", "/home/vagrant/src"
+        deploy.vm.synced_folder "./keys_local", "/home/vagrant/keys_local", mount_options: ["dmode=700","fmode=600"]
+        
+        # Setup
+        deploy.vm.provision :shell, :inline => "apt-add-repository ppa:ansible/ansible"
+        deploy.vm.provision :shell, :inline => "apt-get update"
+        deploy.vm.provision :shell, :inline => "apt-get -y install ansible"
+        deploy.vm.provision :shell, :inline => "apt-get -y install python"
+        deploy.vm.provision :shell, :inline => "history -s ansible-playbook deploy/playbook.yml --inventory-file=deploy/infra_local.yml"
+    end
+end
