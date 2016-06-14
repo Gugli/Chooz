@@ -4,5 +4,19 @@
    command: php "/home/vagrant/composer" install
    args:
      chdir: "/home/vagrant/src"
-   
+     
+ - name: "Create app dir"
+   become: yes
+   file: path="/var/www/chooz" state=directory owner="www-data" group="www-data"   
+     
+ - name: "Deploy app"
+   become: yes
+   synchronize:   
+     src: "/home/vagrant/src/"
+     dest: "{{install_path}}"
+     delete: yes
+     recursive: yes
+     rsync_opts:
+      - "--no-motd"
+      - "--exclude=.git"
 ...
