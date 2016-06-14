@@ -1,0 +1,8 @@
+---
+ - name: "Run Composer install"
+   delegate_to: localhost
+   command: php "/home/vagrant/composer" install
+   args:
+     chdir: "/home/vagrant/src"
+   
+...

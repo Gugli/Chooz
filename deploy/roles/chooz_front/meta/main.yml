@@ -1,5 +1,5 @@
 ---
 dependencies:
   - { role: "virtual_host" }
-  - { role: "local_install_composer" }
+  - { role: "deploy_app" }
 ...

@@ -60,6 +60,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         deploy.vm.provision :shell, :inline => "apt-get update"
         deploy.vm.provision :shell, :inline => "apt-get -y install ansible"
         deploy.vm.provision :shell, :inline => "apt-get -y install python"
-        deploy.vm.provision :shell, :inline => "history -s ansible-playbook deploy/playbook.yml --inventory-file=deploy/infra_local.yml"
+        deploy.vm.provision :shell, :inline => "history -s ansible-playbook deploy/playbook.yml --inventory-file=deploy/infra.py"
     end
 end

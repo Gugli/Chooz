@@ -1,12 +1,12 @@
 ---
  - name: Download Composer
    delegate_to: localhost
-   get_url: url="https://getcomposer.org/composer.phar" dest="/tmp/composer_installer" mode="0755"
+   get_url: url="https://getcomposer.org/installer" dest="/tmp/composer_installer" mode="0755"
    
  - name: "Run Composer setup"
    delegate_to: localhost
-   command: php "/tmp/composer_installer" --filename="/tmp/composer"
+   command: php "/tmp/composer_installer" --install-dir=/home/vagrant/ --filename=composer
    args:
-     creates: "/tmp/composer"
+     creates: "/home/vagrant/composer"
    
 ...
