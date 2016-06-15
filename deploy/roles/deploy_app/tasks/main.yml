@@ -11,6 +11,8 @@
      
  - name: "Deploy app"
    become: yes
+   tags:
+    - deploy
    synchronize:   
      src: "/home/vagrant/src/"
      dest: "{{install_path}}"
