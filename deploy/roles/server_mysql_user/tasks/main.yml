@@ -1,0 +1,32 @@
+---
+ - name: "Create database"
+   mysql_db:
+   args:
+     name: "{{server_mysql_user_database}}" 
+     state: present
+     login_user: "root" 
+     login_password: "{{mysql_root_password}}" 
+   
+ - name: "Create user from localhost"
+   mysql_user:
+   args:
+     name: "{{server_mysql_user_name}}"
+     host: "%" 
+     password: "{{ lookup('password', 'passwords/'+ inventory_hostname +'_mysql_' + server_mysql_user_name + '_from_localhost length=15')}}" 
+     priv: "{{server_mysql_user_database}}.*:{{server_mysql_user_privileges}}"
+     login_user: "root" 
+     login_password: "{{mysql_root_password}}" 
+     state: present
+   
+ - name: "Create user from hosts"
+   mysql_user:
+   args:
+     name: "{{server_mysql_user_name}}"
+     host: "{{hostvars[item]['ansible_host']}}" 
+     password: "{{ lookup('password', 'passwords/'+ inventory_hostname +'_mysql_' + server_mysql_user_name + '_from_' + item + ' length=15')}}" 
+     priv: "{{server_mysql_user_database}}.*:{{server_mysql_user_privileges}}"
+     login_user: "root" 
+     login_password: "{{mysql_root_password}}" 
+     state: present
+   with_items: "{{server_mysql_user_hosts}}"
+...

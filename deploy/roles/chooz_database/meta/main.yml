@@ -1,4 +1,8 @@
 ---
 dependencies:
-  - { role: "server_mysql" }
+  - role: "server_mysql_user"
+    server_mysql_user_name: "chooz"
+    server_mysql_user_database: "choozdb"
+    server_mysql_user_hosts: "{{groups['front']}}"
+    server_mysql_user_privileges: "ALL" 
 ...
