@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Option
  *
- * @ORM\Table(name="poll\option")
+ * @ORM\Table(name="poll_options")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\Poll\OptionRepository")
  */
 class Option
