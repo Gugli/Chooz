@@ -5,6 +5,7 @@
    with_items:
     - "apache2"
     - "libapache2-mod-php5"
+    - "php5-mysql"
     
  - name: "Disable default vhost"
    file: path="/etc/apache2/sites-enabled/000-default.conf" state=absent
