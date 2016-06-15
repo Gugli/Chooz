@@ -18,4 +18,10 @@
    become: yes
    with_items:
     - "python-mysqldb"
+    
+ - name: "Bind to all interfaces"
+   copy: src='../templates/bindtoall.cnf' dest='/etc/mysql/conf.d/bindtoall.cnf'
+   become: yes
+   notify:
+    - mysql_restart
 ...
