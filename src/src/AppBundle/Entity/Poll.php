@@ -36,6 +36,13 @@ class Poll
     private $token;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_closed", type="boolean")
+     */
+    private $isClosed;
+
+    /**
      * @ORM\OneToMany(targetEntity="Option", mappedBy="poll")
      */
     private $options;
