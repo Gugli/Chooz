@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: "virtual_host" }
-...
