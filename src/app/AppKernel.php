@@ -3,6 +3,9 @@
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
+define ('APP_CACHE_FOLDER', '/home/vagrant/cache/');
+define ('APP_LOGS_FOLDER', '/home/vagrant/logs/');
+
 class AppKernel extends Kernel
 {
     public function registerBundles()
@@ -36,12 +39,12 @@ class AppKernel extends Kernel
 
     public function getCacheDir()
     {
-        return dirname(__DIR__).'/var/cache/'.$this->getEnvironment();
+        return APP_CACHE_FOLDER.$this->getEnvironment();
     }
 
     public function getLogDir()
     {
-        return dirname(__DIR__).'/var/logs';
+        return APP_LOGS_FOLDER;
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)

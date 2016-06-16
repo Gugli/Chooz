@@ -7,7 +7,7 @@
      
  - name: "Create app dir"
    become: yes
-   file: path="/var/www/chooz" state=directory owner="www-data" group="www-data"   
+   file: path="{{install_path}}" state=directory owner="www-data" group="www-data" recurse=yes
      
  - name: "Deploy app"
    become: yes
@@ -21,4 +21,53 @@
      rsync_opts:
       - "--no-motd"
       - "--exclude=.git"
+      
+   
+ - name: "Set files owner"
+   become: yes
+   file: path="{{install_path}}" state=directory owner="www-data" group="www-data" recurse=yes
+   changed_when: false
+   
+ - name: "Set files rights"
+   become: yes
+   command: find "{{install_path}}" -type f -exec chmod ugo=r {} \;
+   changed_when: false
+   
+ - name: "Set folders rights"
+   become: yes
+   command:  find "{{install_path}}" -type d -exec chmod ugo=rx {} \;
+   changed_when: false
+
+ - name: "Create additionnal dirs"
+   become: yes
+   file: path="{{item}}" state=directory owner="www-data" group="www-data" recurse=yes
+   with_items:
+    - "{{cache_path}}"
+    - "{{logs_path}}"
+    
+ - name: "Set additionnal files rights"
+   become: yes
+   command: find "{{item}}" -type f -exec chmod u=rw,go= {} \;
+   changed_when: false
+   with_items:
+    - "{{cache_path}}"
+    - "{{logs_path}}"
+    
+ - name: "Set additionnal folders rights"
+   become: yes
+   command:  find "{{item}}" -type d -exec chmod u=rwx,go= {} \;
+   changed_when: false
+   with_items:
+    - "{{cache_path}}"
+    - "{{logs_path}}"
+   
+ - name: "Set additionnal dirs"
+   become: yes
+   lineinfile: regexp="{{item.regexp}}" line="{{item.line}}" state=present dest="{{install_path}}/app/AppKernel.php"
+   with_items:
+    - regexp: "define \\('APP_LOGS_FOLDER', '.*'\\);"
+      line: "define ('APP_LOGS_FOLDER', '{{logs_path}}');"
+    - regexp: "define \\('APP_CACHE_FOLDER', '.*'\\);"
+      line: "define ('APP_CACHE_FOLDER', '{{cache_path}}');"
+
 ...

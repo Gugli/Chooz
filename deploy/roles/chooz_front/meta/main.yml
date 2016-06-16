@@ -1,5 +1,5 @@
 ---
 dependencies:
-  - { role: "virtual_host", virtual_host_name: "chooz", virtual_host_path: "/var/www/chooz/web/" }
-  - { role: "deploy_app", install_path: "/var/www/chooz" }
+  - { role: "virtual_host", virtual_host_name: "chooz", virtual_host_path: "/var/www/chooz/app/web/" }
+  - { role: "deploy_app", install_path: "/var/www/chooz/app/", cache_path: "/var/www/chooz/cache/", logs_path: "/var/www/chooz/logs/" }
 ...
