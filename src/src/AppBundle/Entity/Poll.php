@@ -35,7 +35,15 @@ class Poll
      */
     private $token;
 
-
+    /**
+     * @ORM\OneToMany(targetEntity="Option", mappedBy="poll")
+     */
+    private $options;
+    
+    public function __construct() {
+        $this->options = new ArrayCollection();
+    }
+    
     /**
      * Get id
      *

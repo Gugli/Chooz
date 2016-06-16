@@ -1,14 +1,14 @@
 <?php
 
-namespace AppBundle\Entity\Poll;
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Participant
  *
- * @ORM\Table(name="poll_participants")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\Poll\ParticipantRepository")
+ * @ORM\Table(name="participants")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ParticipantRepository")
  */
 class Participant
 {
@@ -22,18 +22,20 @@ class Participant
     private $id;
 
     /**
-     * @var int
+     * @var User
      *
-     * @ORM\Column(name="user_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
-    private $userId;
+    private $user;
 
     /**
-     * @var int
+     * @var Poll
      *
-     * @ORM\Column(name="poll_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="Poll", inversedBy="participants")
+     * @ORM\JoinColumn(name="poll_id", referencedColumnName="id", nullable=false)
      */
-    private $pollId;
+    private $poll;
 
     /**
      * @var bool
@@ -50,11 +52,12 @@ class Participant
     private $token;
 
     /**
-     * @var int
+     * @var Option
      *
-     * @ORM\Column(name="option_id", type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Option")
+     * @ORM\JoinColumn(name="option_id", referencedColumnName="id", nullable=true)
      */
-    private $optionId;
+    private $option;
 
 
     /**
@@ -92,27 +95,27 @@ class Participant
     }
 
     /**
-     * Set pollId
+     * Set poll
      *
-     * @param integer $pollId
+     * @param Poll $poll
      *
      * @return Participant
      */
-    public function setPollId($pollId)
+    public function setPoll($poll)
     {
-        $this->pollId = $pollId;
+        $this->poll = $poll;
 
         return $this;
     }
 
     /**
-     * Get pollId
+     * Get poll
      *
-     * @return int
+     * @return Poll
      */
-    public function getPollId()
+    public function getPoll()
     {
-        return $this->pollId;
+        return $this->poll;
     }
 
     /**
@@ -164,27 +167,27 @@ class Participant
     }
 
     /**
-     * Set optionId
+     * Set option
      *
-     * @param integer $optionId
+     * @param Option $option
      *
      * @return Participant
      */
-    public function setOptionId($optionId)
+    public function setOption($option)
     {
-        $this->optionId = $optionId;
+        $this->option = $option;
 
         return $this;
     }
 
     /**
-     * Get optionId
+     * Get option
      *
-     * @return int
+     * @return Option
      */
-    public function getOptionId()
+    public function getOption()
     {
-        return $this->optionId;
+        return $this->option;
     }
 }
 

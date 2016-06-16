@@ -1,14 +1,14 @@
 <?php
 
-namespace AppBundle\Entity\Poll;
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Option
  *
- * @ORM\Table(name="poll_options")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\Poll\OptionRepository")
+ * @ORM\Table(name="options")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\OptionRepository")
  */
 class Option
 {
@@ -29,11 +29,12 @@ class Option
     private $text;
 
     /**
-     * @var int
+     * @var Poll
      *
-     * @ORM\Column(name="poll_id", type="integer")
+     * @ORM\ManyToOne(targetEntity="Poll", inversedBy="options")
+     * @ORM\JoinColumn(name="poll_id", referencedColumnName="id", nullable=false)
      */
-    private $pollId;
+    private $poll;
 
 
     /**
@@ -71,27 +72,27 @@ class Option
     }
 
     /**
-     * Set pollId
+     * Set poll
      *
-     * @param integer $pollId
+     * @param Poll $poll
      *
      * @return Option
      */
-    public function setPollId($pollId)
+    public function setPoll($poll)
     {
-        $this->pollId = $pollId;
+        $this->poll = $poll;
 
         return $this;
     }
 
     /**
-     * Get pollId
+     * Get poll
      *
-     * @return int
+     * @return Poll
      */
-    public function getPollId()
+    public function getPoll()
     {
-        return $this->pollId;
+        return $this->poll;
     }
 }
 
