@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="vote">
+		VOTE : {{Question}}
+		{% for choice in choices %}
+		   - {{choice}}
+		{% endfor %}
+		Qui est le mieux placé pour répondre : 
+		{% for participant in participant %}
+		   - {{participant}}
+		{% endfor %}
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+</style>
+{% endblock %}
