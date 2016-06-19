@@ -136,7 +136,7 @@ class Poll
      */
     public function addOption(Option $option)
     {
-        $this->options->addElement($option);
+        $this->options[] = $option;
         $option->setPoll($this);
         return $this;
     }
