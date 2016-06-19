@@ -8,6 +8,9 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+        {% javascripts '@jquery' %}
+            <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>
