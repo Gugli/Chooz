@@ -3,12 +3,56 @@
 {% block body %}
     <div id="page">
         Créer un vote : 
-		{{ form_start(form_poll) }}
-		{{ form_widget(form_poll) }}
-		{{ form_end(form_poll) }}
+        {{ form_start(form_poll) }}
+        {{ form_widget(form_poll) }}
+        {{ form_end(form_poll) }}
+        
+        <a href="#" id="add-another-email">Add another option</a>
     </div>
 {% endblock %}
 
+
+{% block javascripts %}
+<script>
+var $collectionHolder;
+
+// setup an "add a tag" link
+var $addOptionLink = $('<a href="#" class="add_tag_link">Add a tag</a>');
+
+jQuery(document).ready(function() {
+    // Get the div that holds the collection of options
+    $collectionHolder = $('div.poll_options');
+
+    // add the "add a tag" anchor and li to the options div
+    $collectionHolder.append($addOptionLink);
+
+    // count the current form inputs we have (e.g. 2), use that as the new
+    // index when inserting a new item (e.g. 2)
+    $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+    $addOptionLink.on('click', function(e) {
+        // prevent the link from creating a "#" on the URL
+        e.preventDefault();
+
+        var prototype = $collectionHolder.data('prototype');
+
+        // get the new index
+        var index = $collectionHolder.data('index');
+
+        // Replace '__name__' in the prototype's HTML to
+        // instead be a number based on how many items we have
+        var newForm = prototype.replace(/__name__/g, index);
+
+        // increase the index with one for the next item
+        $collectionHolder.data('index', index + 1);
+
+        // Display the form in the page, before the "Add a tag" link
+        $newLink.before(newForm);
+    });
+});
+</script>
+{% endblock %}
+        
 {% block stylesheets %}
 <style>
 </style>
