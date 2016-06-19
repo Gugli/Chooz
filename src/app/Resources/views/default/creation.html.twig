@@ -1,8 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div id="wrapper">
-        Create your poll
+    <div id="page">
+        Créer un vote : 
+		{{ form_start(form_poll) }}
+		{{ form_widget(form_poll) }}
+		{{ form_end(form_poll) }}
     </div>
 {% endblock %}
 

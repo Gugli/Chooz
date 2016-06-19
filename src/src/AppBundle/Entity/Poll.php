@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Poll
@@ -43,7 +44,7 @@ class Poll
     private $isClosed;
 
     /**
-     * @ORM\OneToMany(targetEntity="Option", mappedBy="poll")
+     * @ORM\OneToMany(targetEntity="Option", mappedBy="poll", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $options;
     
@@ -98,6 +99,7 @@ class Poll
 
         return $this;
     }
+	
 
     /**
      * Get token
@@ -107,6 +109,86 @@ class Poll
     public function getToken()
     {
         return $this->token;
+    }
+	
+    /**
+     * Set options
+     *
+     * @param Option[] $options
+     *
+     * @return Poll
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+        foreach ($this->options as $option) {
+            $option->setPoll($this);
+        }
+        return $this;
+    }
+    
+    /**
+     * Add option
+     *
+     * @param Option $option
+     *
+     * @return Poll
+     */
+    public function addOption(Option $option)
+    {
+        $this->options->addElement($option);
+        $option->setPoll($this);
+        return $this;
+    }
+
+    /**
+     * Remove option
+     *
+     * @param Option $option
+     *
+     * @return Poll
+     */
+    public function removeOption(Option $option)
+    {
+        $option->setPoll(null);
+        $this->addresses->removeElement($option);
+        return $this;
+    }
+    
+	
+    /**
+     * Get options
+     *
+     * @return Option[]
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Set isClosed;
+     *
+     * @param bool $token
+     *
+     * @return Poll
+     */
+    public function setIsClosed($isClosed)
+    {
+        $this->isClosed = $isClosed;
+
+        return $this;
+    }
+	
+
+    /**
+     * Get isClosed
+     *
+     * @return string
+     */
+    public function getIsClosed()
+    {
+        return $this->isClosed;
     }
 }
 

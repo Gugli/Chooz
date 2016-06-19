@@ -2,14 +2,11 @@
 
 {% block body %}
     <div id="vote">
-		VOTE : {{Question}}
-		{% for choice in choices %}
-		   - {{choice}}
-		{% endfor %}
-		Qui est le mieux placé pour répondre : 
-		{% for participant in participant %}
-		   - {{participant}}
-		{% endfor %}
+		<div id="form_choices">
+			{{ form_start(form_choices) }}
+			{{ form_widget(form_choices) }}
+			{{ form_end(form_choices) }}
+		</div>
     </div>
 {% endblock %}
 

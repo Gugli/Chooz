@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Participant
@@ -26,6 +27,8 @@ class Participant
      *
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @Assert\Type(type="AppBundle\Entity\User")
+     * @Assert\Valid()
      */
     private $user;
 
@@ -34,6 +37,8 @@ class Participant
      *
      * @ORM\ManyToOne(targetEntity="Poll", inversedBy="participants")
      * @ORM\JoinColumn(name="poll_id", referencedColumnName="id", nullable=false)
+     * @Assert\Type(type="AppBundle\Entity\Poll")
+     * @Assert\Valid()
      */
     private $poll;
 
@@ -56,6 +61,8 @@ class Participant
      *
      * @ORM\ManyToOne(targetEntity="Option")
      * @ORM\JoinColumn(name="option_id", referencedColumnName="id", nullable=true)
+     * @Assert\Type(type="AppBundle\Entity\Option")
+     * @Assert\Valid()
      */
     private $option;
 

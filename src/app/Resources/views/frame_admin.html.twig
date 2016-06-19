@@ -2,7 +2,11 @@
 
 {% block body %}
     <div id="admin">
-		CLORE LE VOTE
+		<div id="form_admin">
+			{{ form_start(form_admin) }}
+			{{ form_widget(form_admin) }}
+			{{ form_end(form_admin) }}
+		</div>
     </div>
 {% endblock %}
 
