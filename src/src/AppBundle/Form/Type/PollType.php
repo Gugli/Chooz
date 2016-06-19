@@ -16,7 +16,6 @@ class PollType extends AbstractType
         $builder->add('options', CollectionType::class, array(
             'entry_type'   => OptionType::class,
             'allow_add'    => true,
-            'allow_delete' => true,
             'by_reference' => false,
         ));
         $builder->add('save', SubmitType::class);
