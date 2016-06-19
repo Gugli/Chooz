@@ -65,5 +65,17 @@
       line: "define ('APP_LOGS_FOLDER', '{{logs_path}}');"
     - regexp: "define \\('APP_CACHE_FOLDER', '.*'\\);"
       line: "define ('APP_CACHE_FOLDER', '{{cache_path}}');"
+      
+ - name: "Set db and other config"
+   become: yes
+   template: src="../templates/parameters.yml" dest="{{install_path}}/app/config/parameters.yml" owner="www-data" group="www-data" mode="u=r,go="
+   tags:
+    - deploy
+   vars:
+    database_host: "{{app_database_host}}"
+    database_name: "{{app_database_name}}"
+    database_user: "{{app_database_user}}"
+    database_password: "{{app_database_password}}"
+    secret: "{{ lookup('password', 'passwords/'+ inventory_hostname +'_appsecret_'+app_name+' length=15') }}"
 
 ...
