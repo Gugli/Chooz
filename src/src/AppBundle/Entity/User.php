@@ -59,6 +59,42 @@ class User
 
         return $this;
     }
+    
+    /**
+     * Get hashed email from clear
+     *
+     * @return string
+     */
+    public static function hashEmail($emailClear)
+    {
+        return md5($emailClear);
+    }
+    
+    /**
+     * Set emailHashFromEmailClear
+     *
+     * @param string $emailClear
+     *
+     * @return User
+     */
+    public function setEmailHashFromEmailClear($emailClear)
+    {
+        $this->emailHash = self::hashEmail($emailClear);
+
+        return $this;
+    }
+    
+    /**
+     * Get if email is the same
+     *
+     * @param string $emailClear
+     *
+     * @return bool
+     */
+    public function isEmail($emailClear)
+    {
+        return $this->emailHash == self::hashEmail($emailClear);
+    }
 
     /**
      * Get emailHash

@@ -9,7 +9,8 @@ class ParticipantType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('email');
+        $builder->add('emailClear');
+        $builder->add('isAdmin');
     }
 
     public function configureOptions(OptionsResolver $resolver)

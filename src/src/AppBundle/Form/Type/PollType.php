@@ -18,6 +18,13 @@ class PollType extends AbstractType
             'allow_add'    => true,
             'by_reference' => false,
         ));
+
+        $builder->add('participants', CollectionType::class, array(
+            'entry_type'   => ParticipantType::class,
+            'allow_add'    => true,
+            'by_reference' => false,
+        ));
+        
         $builder->add('save', SubmitType::class);
     }
 

@@ -2,9 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\Type\PollType;
 use AppBundle\Entity\Poll;
 use AppBundle\Entity\Option;
-use AppBundle\Form\Type\PollType;
+use AppBundle\Entity\Participant;
+use AppBundle\Entity\User;
+use AppBundle\Repository\UserRepository;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,13 +27,21 @@ class DefaultController extends Controller
 		
         $option1 = new Option();
         $option1->setText('Choix 1');
-        $option1->setPoll($poll);
-        $poll->getOptions()->add($option1);
+        $poll->addOption($option1);
 		
         $option2 = new Option();
         $option2->setText('Choix 2');
-        $option2->setPoll($poll);
-        $poll->getOptions()->add($option2);
+        $poll->addOption($option2);
+        
+        $participant1 = new Participant();
+        $participant1->setEmailClear('Participant1@email.com');
+        $participant1->setIsAdmin(true);
+        $poll->addParticipant($participant1);
+		
+        $participant2 = new Participant();
+        $participant2->setEmailClear('Participant2@email.com');
+        $participant2->setIsAdmin(false);
+        $poll->addParticipant($participant2);
 		//////////////////
 		
         $form_poll = $this->createForm(
@@ -60,11 +71,23 @@ class DefaultController extends Controller
         $form_poll->handleRequest($request);
 
         if ($form_poll->isSubmitted() && $form_poll->isValid()) {
-            $poll = $form_poll->getData();
-			
+            
 			$newToken = bin2hex(openssl_random_pseudo_bytes( 32 ));
 			$poll->setToken( $newToken );
 			$poll->setIsClosed(false);
+            $userRepository = $this->getDoctrine()->getRepository('AppBundle:User');
+            
+            foreach($poll->getParticipants() as $participant) {
+                $newToken = bin2hex(openssl_random_pseudo_bytes( 32 ));
+                
+                $user = $userRepository->findByEmailClear( $participant->getEmailClear() );
+                if(!$user) {
+                    $user = new User();
+                    $user->setEmailHashFromEmailClear($participant->getEmailClear());
+                }
+                $participant->setToken($newToken);
+                $participant->setUser($user);
+            }
 			
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($poll);

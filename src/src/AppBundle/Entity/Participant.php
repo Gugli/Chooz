@@ -33,6 +33,13 @@ class Participant
     private $user;
 
     /**
+     * @var string
+     *
+     * Only used when getting a form
+     */
+    private $emailClear;
+    
+    /**
      * @var Poll
      *
      * @ORM\ManyToOne(targetEntity="Poll", inversedBy="participants")
@@ -125,6 +132,29 @@ class Participant
         return $this->poll;
     }
 
+    /**
+     * Set emailClear
+     *
+     * @param string $emailClear
+     *
+     * @return Participant
+     */
+    public function setEmailClear($emailClear)
+    {
+        $this->emailClear = $emailClear;
+
+        return $this;
+    }
+
+    /**
+     * Get emailClear
+     *
+     * @return string
+     */
+    public function getEmailClear()
+    {
+        return $this->emailClear;
+    }
     /**
      * Set isAdmin
      *

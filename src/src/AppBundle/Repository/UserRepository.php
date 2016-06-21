@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\User;
+
 /**
  * UserRepository
  *
@@ -10,4 +12,24 @@ namespace AppBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+    
+    public function findByEmailClear($emailClear)
+    {
+        $emailHash = User::hashEmail($emailClear);
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+        
+        $qb->select('u')
+           ->from('user', 'u')
+           ->where('u.emailHash = :hash')
+           ->setParameter('hash', $emailHash);
+           
+        $query = $qb->getQuery();
+                    
+        try {
+            return $query->getSingleResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
 }

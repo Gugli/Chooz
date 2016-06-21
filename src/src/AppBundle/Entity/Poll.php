@@ -48,8 +48,14 @@ class Poll
      */
     private $options;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Participant", mappedBy="poll", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $participants;
+    
     public function __construct() {
         $this->options = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
     
     /**
@@ -151,7 +157,7 @@ class Poll
     public function removeOption(Option $option)
     {
         $option->setPoll(null);
-        $this->addresses->removeElement($option);
+        $this->options->removeElement($option);
         return $this;
     }
     
@@ -190,5 +196,59 @@ class Poll
     {
         return $this->isClosed;
     }
+    
+    /**
+     * Set participants
+     *
+     * @param Participant[] $options
+     *
+     * @return Poll
+     */
+    public function setParticipants($participants)
+    {
+        $this->participants = $participants;
+        foreach ($this->participants as $participant) {
+            $participant->setPoll($this);
+        }
+        return $this;
+    }
+    
+    /**
+     * Add participant
+     *
+     * @param Participant $participant
+     *
+     * @return Poll
+     */
+    public function addParticipant(Participant $participant)
+    {
+        $this->participants[] = $participant;
+        $participant->setPoll($this);
+        return $this;
+    }
+
+    /**
+     * Remove participant
+     *
+     * @param Participant $participant
+     *
+     * @return Poll
+     */
+    public function removeParticipant(Participant $participant)
+    {
+        $participant->setPoll(null);
+        $this->participants->removeElement($participant);
+        return $this;
+    }
+    /**
+     * Get participants
+     *
+     * @return Participant[]
+     */
+    public function getParticipants()
+    {
+        return $this->participants;
+    }
+
 }
 
