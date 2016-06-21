@@ -20,7 +20,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         $qb = $em->createQueryBuilder();
         
         $qb->select('u')
-           ->from('user', 'u')
+           ->from('AppBundle:user', 'u')
            ->where('u.emailHash = :hash')
            ->setParameter('hash', $emailHash);
            

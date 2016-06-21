@@ -25,7 +25,7 @@ class Participant
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User",cascade={"persist"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      * @Assert\Type(type="AppBundle\Entity\User")
      * @Assert\Valid()
@@ -85,27 +85,26 @@ class Participant
     }
 
     /**
-     * Set userId
+     * Set user
      *
-     * @param integer $userId
+     * @param User $user
      *
      * @return Participant
      */
-    public function setUserId($userId)
+    public function setUser($user)
     {
-        $this->userId = $userId;
-
+        $this->user = $user;
         return $this;
     }
 
     /**
-     * Get userId
+     * Get user
      *
-     * @return int
+     * @return User
      */
-    public function getUserId()
+    public function getUser()
     {
-        return $this->userId;
+        return $this->user;
     }
 
     /**

@@ -84,6 +84,7 @@ class DefaultController extends Controller
                 if(!$user) {
                     $user = new User();
                     $user->setEmailHashFromEmailClear($participant->getEmailClear());
+                    $user->setScore(0);
                 }
                 $participant->setToken($newToken);
                 $participant->setUser($user);
