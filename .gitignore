@@ -1,2 +1,4 @@
 .vagrant
 **/*.retry
+src/web/assetic/**
+src/web/js/**
