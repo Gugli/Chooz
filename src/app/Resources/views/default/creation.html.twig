@@ -6,8 +6,6 @@
         {{ form_start(form_poll) }}
         {{ form_widget(form_poll) }}
         {{ form_end(form_poll) }}
-        
-        <a href="#" id="add-another-email">Add another option</a>
     </div>
 {% endblock %}
 
@@ -17,37 +15,36 @@
 var $collectionHolder;
 
 // setup an "add a tag" link
-var $addOptionLink = $('<a href="#" class="add_tag_link">Add a tag</a>');
+var $optionAddLink      = $('<a href="#" class="option_add_link">Add an option</a>');
+var $optionRemLink      = $('<a href="#" class="option_rem_link">Delete</a>');
+var $participantAddLink = $('<a href="#" class="participant_add_link">Add a participant</a>');
+var $participantRemLink = $('<a href="#" class="participant_rem_link">Delete</a>');
 
-jQuery(document).ready(function() {
-    // Get the div that holds the collection of options
-    $collectionHolder = $('div.poll_options');
+$(document).ready(function() {
+    $options = $('#poll_options');
+    $options.append($optionAddLink);
+    $options.data('index', $options.children('div').length);
 
-    // add the "add a tag" anchor and li to the options div
-    $collectionHolder.append($addOptionLink);
-
-    // count the current form inputs we have (e.g. 2), use that as the new
-    // index when inserting a new item (e.g. 2)
-    $collectionHolder.data('index', $collectionHolder.find(':input').length);
-
-    $addOptionLink.on('click', function(e) {
-        // prevent the link from creating a "#" on the URL
+    $optionAddLink.on('click', function(e) {
         e.preventDefault();
-
-        var prototype = $collectionHolder.data('prototype');
-
-        // get the new index
-        var index = $collectionHolder.data('index');
-
-        // Replace '__name__' in the prototype's HTML to
-        // instead be a number based on how many items we have
-        var newForm = prototype.replace(/__name__/g, index);
-
-        // increase the index with one for the next item
-        $collectionHolder.data('index', index + 1);
-
-        // Display the form in the page, before the "Add a tag" link
-        $newLink.before(newForm);
+        var prototype = $options.data('prototype');
+        var index = $options.data('index');
+        var newForm = prototype.replace(/__name__label__/g, index).replace(/__name__/g, index);
+        $options.data('index', index + 1);
+        $optionAddLink.before(newForm);
+    });
+	
+    $participants = $('#poll_participants');
+    $participants.append($participantAddLink);
+    $participants.data('index', $participants.children('div').length);
+	
+    $participantAddLink.on('click', function(e) {
+        e.preventDefault();
+        var prototype = $participants.data('prototype');
+        var index = $participants.data('index');
+        var newForm = prototype.replace(/__name__label__/g, index).replace(/__name__/g, index);
+        $participants.data('index', index + 1);
+        $participantAddLink.before(newForm);
     });
 });
 </script>
