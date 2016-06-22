@@ -94,7 +94,29 @@ class DefaultController extends Controller
 			$em->persist($poll);
 			$em->flush();
 			
-			return $this->redirectToRoute( 'voteForm' );
+			// send emails
+			$pollToken = $poll->getToken();
+			$creatorRouteParams = null;
+            foreach($poll->getParticipants() as $participant) {
+				$email = $participant->getEmailClear();
+                $participantToken = $participant->getToken();
+				$routeParams = array( 'pollid' => $poll->getId(), 'participanttoken' => $participantToken);
+				if(!$creatorRouteParams)
+					$creatorRouteParams = $routeParams;
+				
+				$link = $this->get('router')->generate('voteForm', $routeParams);
+				$twigparams = array('link'=>$link);
+				
+				$message = \Swift_Message::newInstance();
+				$message->setSubject('Hello Email');
+				$message->setFrom('send@example.com');
+				$message->setTo($email);
+				$message->setBody( $this->renderView( 'emails/participant.html.twig', $twigparams ), 'text/html'  );
+				$message->addPart( $this->renderView( 'emails/participant.txt.twig', $twigparams ), 'text/plain' );
+				$this->get('mailer')->send($message);
+            }
+			
+			return $this->redirectToRoute( 'voteForm', $creatorRouteParams );
         } else {
 			
 			return $this->render('default/creation.html.twig', [
@@ -106,7 +128,7 @@ class DefaultController extends Controller
     }
 	
     /**
-     * @Route("/voteform/", name="voteForm")
+     * @Route("/voteform/{pollid}/{participanttoken}", name="voteForm")
      */
     public function voteFormAction(Request $request)
     {
