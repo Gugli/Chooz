@@ -13,6 +13,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class DefaultController extends Controller
 {
@@ -133,9 +135,62 @@ class DefaultController extends Controller
      */
     public function voteFormAction(Request $request)
     {
-        return $this->render('default/vote.html.twig', [
+		$pollId = $request->attributes->get('pollid');
+		$participantToken = $request->attributes->get('participanttoken');
+		
+		$pollRepository = $this->getDoctrine()->getRepository('AppBundle:Poll');
+		$poll = $pollRepository->findOneById($pollId);		
+		if(!$poll) {
+			throw $this->createNotFoundException('The poll does not exist');
+		}		
+		
+		$participant = null;
+		foreach($poll->getParticipants() as $currentParticipant) {
+			if($currentParticipant->getToken() == $participantToken) {
+				$participant = $currentParticipant;
+				break;
+			}
+		}
+		
+		$isClosed = $poll->getIsClosed();		
+		$isAdmin = $participant->getIsAdmin();
+		$formChoices = null;
+		$formAdmin = null;
+		if($isClosed) {
+			
+		} else {
+			if(!$participant) {
+				throw $this->createNotFoundException('The participant does not exist');
+			}
+			$choicesResult = array();
+			$formChoices = $this->createFormBuilder($choicesResult)
+				->add('choice', ChoiceType::class, array(
+						'label' => 'Vote',
+						'choices' => $poll->getOptions(),
+						'choice_label' => 'text',
+						'expanded' => true
+					))
+				->add('vote', SubmitType::class, array('label' => 'Vote'))
+				->setAction($this->generateUrl('vote'))
+				->getForm();
+
+			if($isAdmin) {
+				
+				$adminResult = array();	
+				$formAdmin = $this->createFormBuilder($adminResult)
+					->add('close', SubmitType::class, array('label' => 'Close Poll'))
+					->setAction($this->generateUrl('close'))
+					->getForm();
+				
+			}
+		}
+		
+		return $this->render('default/vote.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
-			'is_closed' => true,
+			'is_closed' => $isClosed,
+			'is_admin' => $isAdmin,
+			'form_choices' => ( $formChoices ? $formChoices->createView() : null),
+			'form_admin' => ( $formAdmin ? $formAdmin->createView() : null),
         ]);
     }
 	
