@@ -47,7 +47,7 @@ class DefaultController extends Controller
         $poll->addParticipant($participant2);
 		//////////////////
 		
-        $form_poll = $this->createForm(
+        $formPoll = $this->createForm(
 				PollType::class, 
 				$poll,
 				array( 'action' => $this->generateUrl('create'))
@@ -55,7 +55,7 @@ class DefaultController extends Controller
 		
         return $this->render('default/creation.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
-			'form_poll' => $form_poll->createView(),
+			'form_poll' => $formPoll->createView(),
         ]);
     }
 	
@@ -65,15 +65,15 @@ class DefaultController extends Controller
     public function createAction(Request $request)
     {
         $poll = new Poll();
-        $form_poll = $this->createForm(
+        $formPoll = $this->createForm(
 				PollType::class, 
 				$poll,
 				array( 'action' => $this->generateUrl('create'))
 			);
 			
-        $form_poll->handleRequest($request);
+        $formPoll->handleRequest($request);
 
-        if ($form_poll->isSubmitted() && $form_poll->isValid()) {
+        if ($formPoll->isSubmitted() && $formPoll->isValid()) {
             
 			$poll->setIsClosed(false);
             $userRepository = $this->getDoctrine()->getRepository('AppBundle:User');
@@ -121,7 +121,7 @@ class DefaultController extends Controller
 			
 			return $this->render('default/creation.html.twig', [
 				'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
-				'form_poll' => $form_poll->createView(),
+				'form_poll' => $formPoll->createView(),
 			]);
 		}
 		
@@ -215,6 +215,14 @@ class DefaultController extends Controller
 		$poll = $this->getPollFromId( $pollId );
 		$participant = $this->getParticipantFromToken( $poll, $participantToken );
 		
+		$formChoices = $this->createFormChoice( $poll, $participantToken );
+			
+        $formChoices->handleRequest($request);
+
+        if ($formChoices->isSubmitted() && $formChoices->isValid()) {
+			$choicesResult = $formChoices->getData();
+		}
+		
 		return $this->redirectToRoute( 'voteForm', array('pollId' => $pollId, 'participantToken'=>$participantToken ) );
     }
 	
@@ -225,6 +233,22 @@ class DefaultController extends Controller
     {		
 		$poll = $this->getPollFromId( $pollId );
 		$participant = $this->getParticipantFromToken( $poll, $participantToken );
+		
+		$formAdmin = $this->createFormAdmin( $poll, $participantToken );
+			
+        $formAdmin->handleRequest($request);
+
+        if ($formAdmin->isSubmitted() && $formAdmin->isValid()) {
+			$adminResult = $formAdmin->getData();
+			
+			if( $participant->getIsAdmin() ) {
+				$poll->setIsClosed(true);
+				
+				$em = $this->getDoctrine()->getManager();
+				$em->persist($poll);
+				$em->flush();
+			}
+		}
 		
 		return $this->redirectToRoute( 'voteForm', array('pollId' => $pollId, 'participantToken'=>$participantToken ) );
     }
