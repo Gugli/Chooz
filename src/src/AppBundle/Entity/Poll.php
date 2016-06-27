@@ -30,13 +30,6 @@ class Poll
     private $question;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="token", type="string", length=255)
-     */
-    private $token;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="is_closed", type="boolean")
@@ -90,31 +83,6 @@ class Poll
     public function getQuestion()
     {
         return $this->question;
-    }
-
-    /**
-     * Set token
-     *
-     * @param string $token
-     *
-     * @return Poll
-     */
-    public function setToken($token)
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-	
-
-    /**
-     * Get token
-     *
-     * @return string
-     */
-    public function getToken()
-    {
-        return $this->token;
     }
 	
     /**

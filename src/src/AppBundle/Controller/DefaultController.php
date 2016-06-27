@@ -75,8 +75,6 @@ class DefaultController extends Controller
 
         if ($form_poll->isSubmitted() && $form_poll->isValid()) {
             
-			$newToken = bin2hex(openssl_random_pseudo_bytes( 32 ));
-			$poll->setToken( $newToken );
 			$poll->setIsClosed(false);
             $userRepository = $this->getDoctrine()->getRepository('AppBundle:User');
             
@@ -98,7 +96,6 @@ class DefaultController extends Controller
 			$em->flush();
 			
 			// send emails
-			$pollToken = $poll->getToken();
 			$creatorRouteParams = null;
             foreach($poll->getParticipants() as $participant) {
 				$email = $participant->getEmailClear();
@@ -162,18 +159,30 @@ class DefaultController extends Controller
 		return $formAdmin;
 	}
 	
-    /**
-     * @Route("/voteform/{pollId}/{participantToken}", name="voteForm")
-     */
-    public function voteFormAction($pollId, $participantToken, Request $request)
-    {				
+	private function getPollFromId( $pollId ) 
+	{		
 		$pollRepository = $this->getDoctrine()->getRepository('AppBundle:Poll');
 		$poll = $pollRepository->findOneById($pollId);		
 		if(!$poll) {
 			throw $this->createNotFoundException('The poll does not exist');
-		}		
-		
+		}	
+		return $poll;
+	}
+	private function getParticipantFromToken( Poll $poll, $participantToken ) 
+	{		
 		$participant = $poll->findParticipantFromToken($participantToken);
+		if(!$participant) {
+			throw $this->createNotFoundException('The participant does not exist');
+		}
+		return $participant;
+	}
+    /**
+     * @Route("/voteform/{pollId}/{participantToken}", name="voteForm")
+     */
+    public function voteFormAction($pollId, $participantToken, Request $request)
+    {			
+		$poll = $this->getPollFromId( $pollId );
+		$participant = $this->getParticipantFromToken( $poll, $participantToken );
 		
 		$isClosed = $poll->getIsClosed();		
 		$isAdmin = $participant->getIsAdmin();
@@ -182,9 +191,6 @@ class DefaultController extends Controller
 		if($isClosed) {
 			
 		} else {
-			if(!$participant) {
-				throw $this->createNotFoundException('The participant does not exist');
-			}
 			$formChoices = $this->createFormChoice( $poll, $participantToken );
 			if($isAdmin) {
 				$adminResult = array();	
@@ -206,6 +212,9 @@ class DefaultController extends Controller
      */
     public function voteAction($pollId, $participantToken, Request $request)
     {		
+		$poll = $this->getPollFromId( $pollId );
+		$participant = $this->getParticipantFromToken( $poll, $participantToken );
+		
 		return $this->redirectToRoute( 'voteForm', array('pollId' => $pollId, 'participantToken'=>$participantToken ) );
     }
 	
@@ -214,6 +223,9 @@ class DefaultController extends Controller
      */
     public function closeAction($pollId, $participantToken, Request $request)
     {		
+		$poll = $this->getPollFromId( $pollId );
+		$participant = $this->getParticipantFromToken( $poll, $participantToken );
+		
 		return $this->redirectToRoute( 'voteForm', array('pollId' => $pollId, 'participantToken'=>$participantToken ) );
     }
 }
