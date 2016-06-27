@@ -103,7 +103,7 @@ class DefaultController extends Controller
             foreach($poll->getParticipants() as $participant) {
 				$email = $participant->getEmailClear();
                 $participantToken = $participant->getToken();
-				$routeParams = array( 'pollid' => $poll->getId(), 'participanttoken' => $participantToken);
+				$routeParams = array( 'pollId' => $poll->getId(), 'participantToken' => $participantToken);
 				if(!$creatorRouteParams)
 					$creatorRouteParams = $routeParams;
 				
@@ -130,27 +130,50 @@ class DefaultController extends Controller
 		
     }
 	
+	private function createFormChoice( Poll $poll, $participantToken ) 
+	{
+		$choicesResult = array();
+		$formChoices = $this->createFormBuilder($choicesResult)
+			->add('choice', ChoiceType::class, array(
+					'label' => 'Vote',
+					'choices' => $poll->getOptions(),
+					'choice_label' => 'text',
+					'expanded' => true
+				))
+			->add('expert', ChoiceType::class, array(
+					'label' => 'Expert',
+					'choices' => $poll->getParticipants(),
+					'choice_label' => 'user.name',
+					'expanded' => true
+				))
+			->add('vote', SubmitType::class, array('label' => 'Vote'))
+			->setAction($this->generateUrl('vote', array('pollId' => $poll->getId(), 'participantToken'=>$participantToken )))
+			->getForm();
+		return $formChoices;
+	}
+	
+	private function createFormAdmin( Poll $poll, $participantToken ) 
+	{
+		$adminResult = array();	
+		$formAdmin = $this->createFormBuilder($adminResult)
+			->add('close', SubmitType::class, array('label' => 'Close Poll'))
+			->setAction($this->generateUrl('close', array('pollId' => $poll->getId(), 'participantToken'=>$participantToken )))
+			->getForm();
+		return $formAdmin;
+	}
+	
     /**
-     * @Route("/voteform/{pollid}/{participanttoken}", name="voteForm")
+     * @Route("/voteform/{pollId}/{participantToken}", name="voteForm")
      */
-    public function voteFormAction(Request $request)
-    {
-		$pollId = $request->attributes->get('pollid');
-		$participantToken = $request->attributes->get('participanttoken');
-		
+    public function voteFormAction($pollId, $participantToken, Request $request)
+    {				
 		$pollRepository = $this->getDoctrine()->getRepository('AppBundle:Poll');
 		$poll = $pollRepository->findOneById($pollId);		
 		if(!$poll) {
 			throw $this->createNotFoundException('The poll does not exist');
 		}		
 		
-		$participant = null;
-		foreach($poll->getParticipants() as $currentParticipant) {
-			if($currentParticipant->getToken() == $participantToken) {
-				$participant = $currentParticipant;
-				break;
-			}
-		}
+		$participant = $poll->findParticipantFromToken($participantToken);
 		
 		$isClosed = $poll->getIsClosed();		
 		$isAdmin = $participant->getIsAdmin();
@@ -162,26 +185,10 @@ class DefaultController extends Controller
 			if(!$participant) {
 				throw $this->createNotFoundException('The participant does not exist');
 			}
-			$choicesResult = array();
-			$formChoices = $this->createFormBuilder($choicesResult)
-				->add('choice', ChoiceType::class, array(
-						'label' => 'Vote',
-						'choices' => $poll->getOptions(),
-						'choice_label' => 'text',
-						'expanded' => true
-					))
-				->add('vote', SubmitType::class, array('label' => 'Vote'))
-				->setAction($this->generateUrl('vote'))
-				->getForm();
-
+			$formChoices = $this->createFormChoice( $poll, $participantToken );
 			if($isAdmin) {
-				
 				$adminResult = array();	
-				$formAdmin = $this->createFormBuilder($adminResult)
-					->add('close', SubmitType::class, array('label' => 'Close Poll'))
-					->setAction($this->generateUrl('close'))
-					->getForm();
-				
+				$formAdmin = $this->createFormAdmin( $poll, $participantToken );
 			}
 		}
 		
@@ -195,19 +202,18 @@ class DefaultController extends Controller
     }
 	
     /**
-     * @Route("/vote/", name="vote")
+     * @Route("/vote/{pollId}/{participantToken}", name="vote")
      */
-    public function voteAction(Request $request)
-    {
-		
-		return $this->redirectToRoute( 'voteForm' );
+    public function voteAction($pollId, $participantToken, Request $request)
+    {		
+		return $this->redirectToRoute( 'voteForm', array('pollId' => $pollId, 'participantToken'=>$participantToken ) );
     }
 	
     /**
-     * @Route("/close/", name="close")
+     * @Route("/close/{pollId}/{participantToken}", name="close")
      */
-    public function closeAction(Request $request)
-    {
-		return $this->redirectToRoute( 'voteForm' );
+    public function closeAction($pollId, $participantToken, Request $request)
+    {		
+		return $this->redirectToRoute( 'voteForm', array('pollId' => $pollId, 'participantToken'=>$participantToken ) );
     }
 }

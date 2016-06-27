@@ -250,5 +250,22 @@ class Poll
         return $this->participants;
     }
 
+    /**
+     * Find participant from token
+     *
+     * @param string $token
+     *
+     * @return Participant
+     */
+    public function findParticipantFromToken($token)
+    {
+		foreach($this->getParticipants() as $participant) {
+			if($participant->getToken() == $token) {
+				return $participant;
+			}
+		}
+        return null;
+    }
+
 }
 
