@@ -224,6 +224,11 @@ class DefaultController extends Controller
 
         if ($formChoices->isSubmitted() && $formChoices->isValid()) {
 			$choicesResult = $formChoices->getData();
+			$participant->setOption( $choicesResult['choice']);
+			
+			$em = $this->getDoctrine()->getManager();
+			$em->persist($participant);
+			$em->flush();
 		}
 		
 		return $this->redirectToRoute( 'voteForm', array('pollId' => $pollId, 'participantToken'=>$participantToken ) );
