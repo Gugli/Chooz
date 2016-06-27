@@ -80,11 +80,14 @@ class DefaultController extends Controller
             
             foreach($poll->getParticipants() as $participant) {
                 $newToken = bin2hex(openssl_random_pseudo_bytes( 32 ));
-                
-                $user = $userRepository->findByEmailClear( $participant->getEmailClear() );
+                $emailClear = $participant->getEmailClear();
+                $user = $userRepository->findByEmailClear( $emailClear );
                 if(!$user) {
+					preg_match('/^([^\@]*)\@.*$/', $emailClear, $matches);
+					$userName = $matches[1];
                     $user = new User();
-                    $user->setEmailHashFromEmailClear($participant->getEmailClear());
+                    $user->setEmailHashFromEmailClear($emailClear);
+                    $user->setName($userName);
                     $user->setScore(0);
                 }
                 $participant->setToken($newToken);

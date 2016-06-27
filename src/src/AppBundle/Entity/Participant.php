@@ -35,6 +35,10 @@ class Participant
     /**
      * @var string
      *
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email.",
+     *     checkMX = true
+     * )
      * Only used when getting a form
      */
     private $emailClear;
