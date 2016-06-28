@@ -224,7 +224,8 @@ class DefaultController extends Controller
 
         if ($formChoices->isSubmitted() && $formChoices->isValid()) {
 			$choicesResult = $formChoices->getData();
-			$participant->setOption( $choicesResult['choice']);
+			$participant->setChosenOption( $choicesResult['choice']);
+			$participant->setChosenExpert( $choicesResult['expert']->getUser() );
 			
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($participant);

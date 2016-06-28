@@ -71,12 +71,21 @@ class Participant
      * @var Option
      *
      * @ORM\ManyToOne(targetEntity="Option")
-     * @ORM\JoinColumn(name="option_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="chosen_option_id", referencedColumnName="id", nullable=true)
      * @Assert\Type(type="AppBundle\Entity\Option")
      * @Assert\Valid()
      */
-    private $option;
+    private $chosenOption;
 
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="chosen_expert_id", referencedColumnName="id", nullable=true)
+     * @Assert\Type(type="AppBundle\Entity\User")
+     * @Assert\Valid()
+     */
+    private $chosenExpert;
 
     /**
      * Get id
@@ -207,27 +216,51 @@ class Participant
     }
 
     /**
-     * Set option
+     * Set chosen option
      *
-     * @param Option $option
+     * @param Option $chosenOption
      *
      * @return Participant
      */
-    public function setOption($option)
+    public function setChosenOption($chosenOption)
     {
-        $this->option = $option;
+        $this->chosenOption = $chosenOption;
 
         return $this;
     }
 
     /**
-     * Get option
+     * Get chosen option 
      *
      * @return Option
      */
-    public function getOption()
+    public function getChosenOption()
     {
-        return $this->option;
+        return $this->chosenOption;
+    }
+	
+    /**
+     * Set chosen expert
+     *
+     * @param User $chosenExpert
+     *
+     * @return Participant
+     */
+    public function setChosenExpert($chosenExpert)
+    {
+        $this->chosenExpert = $chosenExpert;
+
+        return $this;
+    }
+
+    /**
+     * Get chosen expert
+     *
+     * @return User
+     */
+    public function getChosenExpert()
+    {
+        return $this->chosenExpert;
     }
 }
 
