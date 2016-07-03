@@ -2,6 +2,7 @@
 
 {% block body %}
     <div id="page">
+		Votants : {{participants_count_voted}}/{{participants_count}} <br/>
 		{% if is_closed %}
 			{{ include( 'frame_result.html.twig' ) }}
 		{% else %}

@@ -187,6 +187,11 @@ class DefaultController extends Controller
 		$poll = $this->getPollFromId( $pollId );
 		$participant = $this->getParticipantFromToken( $poll, $participantToken );
 		
+		$pollRepository = $this->getDoctrine()->getRepository('AppBundle:Poll');
+      
+		$participantsCount = $poll->getParticipants()->count( );
+		$participantsVotedCount = $pollRepository->findVotersCountById( $poll );
+		
 		$isClosed = $poll->getIsClosed();		
 		$isAdmin = $participant->getIsAdmin();
 		$formChoices = null;
@@ -205,6 +210,8 @@ class DefaultController extends Controller
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
 			'is_closed' => $isClosed,
 			'is_admin' => $isAdmin,
+			'participants_count' => $participantsCount,
+			'participants_count_voted' => $participantsVotedCount,
 			'form_choices' => ( $formChoices ? $formChoices->createView() : null),
 			'form_admin' => ( $formAdmin ? $formAdmin->createView() : null),
         ]);

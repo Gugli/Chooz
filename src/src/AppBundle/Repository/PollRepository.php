@@ -10,4 +10,24 @@ namespace AppBundle\Repository;
  */
 class PollRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findVotersCountById($poll)
+    {
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+        
+        $qb->select($qb->expr()->count('p.id'))
+           ->from('AppBundle:participant', 'p')
+           ->where('p.poll = :poll')
+           ->andWhere( $qb->expr()->isNotNull('p.chosenOption') )
+           ->setParameter('poll', $poll);
+           
+        $query = $qb->getQuery();
+                    
+        try {
+            return $query->getSingleScalarResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return -1;
+        }
+    }
+
 }
