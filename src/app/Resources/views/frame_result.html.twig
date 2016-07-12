@@ -3,7 +3,13 @@
 {% block body %}
     <div id="result">
 		RESULT
-		Meilleur choix : 
+		{% if selected_expert is null %}
+			Pas de résultat
+		{% elseif selected_expert.ChosenOption is null %}
+			L'expert {{ selected_expert.User.Name }} n'a pas encore voté.
+		{% else %}
+			Meilleur choix : {{ selected_expert.ChosenOption.Text }} par : {{ selected_expert.User.Name }}
+		{% endif %}
 		Choix du nombre : 
     </div>
 {% endblock %}

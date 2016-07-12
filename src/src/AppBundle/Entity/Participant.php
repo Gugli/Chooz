@@ -80,9 +80,9 @@ class Participant
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="Participant")
      * @ORM\JoinColumn(name="chosen_expert_id", referencedColumnName="id", nullable=true)
-     * @Assert\Type(type="AppBundle\Entity\User")
+     * @Assert\Type(type="AppBundle\Entity\Participant")
      * @Assert\Valid()
      */
     private $chosenExpert;
@@ -242,7 +242,7 @@ class Participant
     /**
      * Set chosen expert
      *
-     * @param User $chosenExpert
+     * @param Participant $chosenExpert
      *
      * @return Participant
      */
@@ -256,7 +256,7 @@ class Participant
     /**
      * Get chosen expert
      *
-     * @return User
+     * @return Participant
      */
     public function getChosenExpert()
     {

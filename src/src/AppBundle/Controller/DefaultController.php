@@ -198,8 +198,10 @@ class DefaultController extends Controller
 		$isAdmin = $participant->getIsAdmin();
 		$formChoices = null;
 		$formAdmin = null;
+		$majorityOption = null;
+		$selectedExpert = null;
 		if($isClosed) {
-			$selectedOption = $pollRepository->getSelectedOption( $poll );
+			// $majorityOption = $pollRepository->getMajorityOption( $poll );
 			$selectedExpert = $pollRepository->getSelectedExpert( $poll );
 		} else {
 			$formChoices = $this->createFormChoice( $poll, $participant->getUser()->getName(), $participantToken );
@@ -217,6 +219,8 @@ class DefaultController extends Controller
 			'participants_count_voted' => $participantsVotedCount,
 			'form_choices' => ( $formChoices ? $formChoices->createView() : null),
 			'form_admin' => ( $formAdmin ? $formAdmin->createView() : null),
+			'selected_expert' => $selectedExpert,
+			'majority_option' => $majorityOption,
         ]);
     }
 	
@@ -234,8 +238,8 @@ class DefaultController extends Controller
 
         if ($formChoices->isSubmitted() && $formChoices->isValid()) {
 			$choicesResult = $formChoices->getData();
-			$participant->setChosenOption( $choicesResult['choice']);
-			$participant->setChosenExpert( $choicesResult['expert']->getUser() );
+			$participant->setChosenOption( $choicesResult['choice'] );
+			$participant->setChosenExpert( $choicesResult['expert'] );
 			
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($participant);

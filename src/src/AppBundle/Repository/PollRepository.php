@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Poll;
+use AppBundle\Entity\Participant;
 /**
  * PollRepository
  *
@@ -10,7 +12,7 @@ namespace AppBundle\Repository;
  */
 class PollRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findVotersCountById($poll)
+    public function getVotersCount(Poll $poll)
     {
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
@@ -27,6 +29,49 @@ class PollRepository extends \Doctrine\ORM\EntityRepository
             return $query->getSingleScalarResult();
         } catch (\Doctrine\ORM\NoResultException $e) {
             return -1;
+        }
+    }
+	
+    public function getMajorityOption(Poll $poll)
+    {
+        $em = $this->getEntityManager();
+		
+		$query = $em->createQuery(
+		'SELECT p.chosenExpert.Option, COUNT(p.chosenExpert) AS HIDDEN cnt '.
+		'FROM AppBundle:Participant p '.
+		'WHERE p.poll = :poll '.
+		'AND p.chosenExpert IS NOT NULL '.
+		'GROUP BY p.chosenExpert '.
+		'ORDER BY cnt ASC'
+		);
+		$query->setParameter('poll', $poll);
+                    
+        try {
+            return $query->getSingleResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
+    public function getSelectedExpert(Poll $poll)
+    {
+        $em = $this->getEntityManager();
+		
+		$query = $em->createQuery(
+		'SELECT p, COUNT(p.chosenExpert) AS HIDDEN cnt '.
+		'FROM AppBundle:Participant p '.
+		'JOIN p.chosenExpert e '.
+		'WHERE p.poll = :poll '.
+		'AND p.chosenExpert IS NOT NULL '.
+		'AND e.chosenOption IS NOT NULL '.
+		'GROUP BY p.chosenExpert '.
+		'ORDER BY cnt DESC'
+		);
+		$query->setParameter('poll', $poll);
+                    
+        try {
+            return $query->getSingleResult() ? $query->getSingleResult()->getChosenExpert() : null;
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
         }
     }
 
