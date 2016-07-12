@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class DefaultController extends Controller
 {
@@ -130,10 +131,11 @@ class DefaultController extends Controller
 		
     }
 	
-	private function createFormChoice( Poll $poll, $participantToken ) 
+	private function createFormChoice( Poll $poll, $userName, $participantToken ) 
 	{
-		$choicesResult = array();
+		$choicesResult = array( 'name' => $userName );
 		$formChoices = $this->createFormBuilder($choicesResult)
+			->add('name', TextType::class)
 			->add('choice', ChoiceType::class, array(
 					'label' => 'Vote',
 					'choices' => $poll->getOptions(),
@@ -190,16 +192,17 @@ class DefaultController extends Controller
 		$pollRepository = $this->getDoctrine()->getRepository('AppBundle:Poll');
       
 		$participantsCount = $poll->getParticipants()->count( );
-		$participantsVotedCount = $pollRepository->findVotersCountById( $poll );
+		$participantsVotedCount = $pollRepository->getVotersCount( $poll );
 		
 		$isClosed = $poll->getIsClosed();		
 		$isAdmin = $participant->getIsAdmin();
 		$formChoices = null;
 		$formAdmin = null;
 		if($isClosed) {
-			
+			$selectedOption = $pollRepository->getSelectedOption( $poll );
+			$selectedExpert = $pollRepository->getSelectedExpert( $poll );
 		} else {
-			$formChoices = $this->createFormChoice( $poll, $participantToken );
+			$formChoices = $this->createFormChoice( $poll, $participant->getUser()->getName(), $participantToken );
 			if($isAdmin) {
 				$adminResult = array();	
 				$formAdmin = $this->createFormAdmin( $poll, $participantToken );
@@ -225,7 +228,7 @@ class DefaultController extends Controller
 		$poll = $this->getPollFromId( $pollId );
 		$participant = $this->getParticipantFromToken( $poll, $participantToken );
 		
-		$formChoices = $this->createFormChoice( $poll, $participantToken );
+		$formChoices = $this->createFormChoice( $poll, $participant->getUser()->getName(), $participantToken );
 			
         $formChoices->handleRequest($request);
 
