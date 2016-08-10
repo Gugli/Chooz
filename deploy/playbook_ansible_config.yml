@@ -7,7 +7,7 @@
       with_items:
        - section: defaults
          option:  inventory
-         value:   "/home/vagrant/deploy.infra.py"
+         value:   "/home/vagrant/deploy/infra.py"
        - section: defaults
          option:  gathering
          value:   "explicit"
