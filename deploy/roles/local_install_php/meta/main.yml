@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: "local_apt_update" }
-...
