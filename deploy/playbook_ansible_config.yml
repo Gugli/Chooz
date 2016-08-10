@@ -1,0 +1,24 @@
+---
+ - hosts: "localhost"
+   tasks:
+    - name: Set ansible options
+      ini_file: dest="/etc/ansible/ansible.cfg" section="{{item.section}}" option="{{item.option}}" value={{item.value}}
+      become: yes
+      with_items:
+       - section: defaults
+         option:  inventory
+         value:   "/home/vagrant/deploy.infra.py"
+       - section: defaults
+         option:  gathering
+         value:   "explicit"
+       - section: defaults
+         option:  private_role_vars
+         value:   yes
+       - section: defaults
+         option:  retry_files_enabled
+         value:   false
+       - section: colors
+         option:  verbose
+         value:   "bright blue"
+         
+...
